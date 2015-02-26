@@ -70,8 +70,9 @@ bool GameLooper::Initialize()
 		return false;
 	}
 
-	HWND hWnd = ::CreateWindow(GAME_WND_CLASS, GAME_WND_TITLE, WS_OVERLAPPEDWINDOW & (~WS_MAXIMIZEBOX & ~WS_SIZEBOX),\
-							   CW_USEDEFAULT, CW_USEDEFAULT, GAMEWINDOW_WIDTH, GAMEWINDOW_HEIGHT, nullptr, nullptr, g_hInstance, this);
+	HWND hWnd = ::CreateWindow(GAME_WND_CLASS, GAME_WND_TITLE, WS_POPUPWINDOW,\
+								(GetSystemMetrics(SM_CXSCREEN) - GAMEWINDOW_WIDTH) / 2, (GetSystemMetrics(SM_CYSCREEN) - GAMEWINDOW_HEIGHT) / 2,\
+								GAMEWINDOW_WIDTH, GAMEWINDOW_HEIGHT, nullptr, nullptr, g_hInstance, this);
 	if (!hWnd)
 	{
 		return false;
@@ -103,6 +104,11 @@ LRESULT CALLBACK GameLooper::WindowProc(HWND hWnd, UINT nMessage, WPARAM wParam,
 	{
 		LPCREATESTRUCT lpCS = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		pGameLooper = static_cast<GameLooper *>(lpCS->lpCreateParams);
+	}
+
+	if (nMessage == WM_NCHITTEST)
+	{
+		return HTCAPTION;
 	}
 
 	if (!pGameLooper || !pGameLooper->WindowProc(nMessage, wParam, lParam))

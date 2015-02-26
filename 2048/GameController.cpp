@@ -240,6 +240,31 @@ void GameController::ProcessKey(KPAD_DIR kDir)
 		}
 	}
 
+	// Check if win
+	for (int x = 0; x < m_pGameBoard->GetWidth(); ++x)
+	{
+		for (int y = 0; y < m_pGameBoard->GetHeight(); ++y)
+		{
+			GameBlock &block = m_pGameBoard->GetBlock(x, y);
+			if (block.m_nValue == GAME_WON_SCORE)
+			{
+				// Render once
+				GameMain();
+
+				if (IDYES == ::MessageBox(m_pLooper->GetHWND(), _T("Congratulations! Continue?"), _T("You Win"), MB_YESNO))
+				{
+					Initialize();
+				}
+				else
+				{
+					m_pLooper->Quit();
+				}
+
+				return;
+			}
+		}
+	}
+
 	// Generate new element
 	std::vector<std::pair<int, int> > vEmpty;
 	for (int x = 0; x < m_pGameBoard->GetWidth(); ++x)
@@ -269,7 +294,15 @@ void GameController::ProcessKey(KPAD_DIR kDir)
 	else
 	{
 		int nRand = rand() % vEmpty.size();
-		m_pGameBoard->SetBlock(vEmpty[nRand].first, vEmpty[nRand].second, { 2 });
+
+		int nValue = rand() % 100;
+		int nGenerated = 2;
+		if (nValue < 10 * (10 - GAME_LEVEL))
+		{
+			nGenerated = 4;
+		}
+
+		m_pGameBoard->SetBlock(vEmpty[nRand].first, vEmpty[nRand].second, { nGenerated });
 	}
 }
 
@@ -290,9 +323,13 @@ void GameController::DrawTitle()
 {
 	RECT rt;
 	GetClientRect(m_pLooper->GetHWND(), &rt);
-	rt.bottom = GAMETITLE_HEIGHT;
+	rt.bottom = GAMETITLE_HEIGHT / 2;
 
-	m_pGameRenderer->DrawText(_T("Score :") + std::to_string(m_nTotalScore), &rt,  RGB(255, 255, 255), _T("Arial"), 60);
+	m_pGameRenderer->DrawText(_T("2048 Game"), &rt, RGB(119, 110, 101), _T("Arial"), 60);
+
+	rt.top = GAMETITLE_HEIGHT / 2;
+	rt.bottom = rt.top + GAMETITLE_HEIGHT / 2;
+	m_pGameRenderer->DrawText(_T("Score :") + std::to_string(m_nTotalScore), &rt,  RGB(255, 255, 255), _T("Arial"), 40);
 }
 
 void GameController::DrawBoard()

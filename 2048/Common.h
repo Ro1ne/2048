@@ -17,6 +17,9 @@
 #define GAME_WND_CLASS _T("2048Wnd")
 #define GAME_WND_TITLE _T("2048 Game")
 
+#define GAME_LEVEL 8
+#define GAME_WON_SCORE 2048
+
 static const COLORREF g_aPalette[] = 
 {
 	RGB(238, 228, 218), // 2
