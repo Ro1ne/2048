@@ -39,9 +39,13 @@ static const UINT g_nPaletteSize = ARRAYSIZE(g_aPalette);
 
 #ifndef _UNICODE
 #define tstring std::string 
+#define to_string std::string 
 #else
 #define tstring std::wstring 
+#define to_string std::to_wstring 
 #endif
+
+#define USE_D2D_RENDERER
 
 extern HINSTANCE g_hInstance;
 

@@ -3,7 +3,7 @@
 
 class GameLooper;
 class GameBoard;
-class GameRenderer;
+class BaseRenderer;
 
 class GameController
 {
@@ -29,7 +29,7 @@ protected:
 private:
 	GameLooper *m_pLooper;
 	GameBoard *m_pGameBoard;
-	GameRenderer *m_pGameRenderer;
+	BaseRenderer *m_pRenderer;
 	INT64 m_nTotalScore;
 };
 

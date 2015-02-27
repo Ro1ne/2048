@@ -1,9 +1,9 @@
 #include "Common.h"
-#include "GameRenderer.h"
+#include "GdiRenderer.h"
 
 
-GameRenderer::GameRenderer(HWND hWnd)
-: m_hWnd(hWnd)
+GdiRenderer::GdiRenderer(HWND hWnd)
+: BaseRenderer(hWnd)
 , m_hMemoryDC(nullptr)
 , m_hBitmap(nullptr)
 , m_hBitmapOld(nullptr)
@@ -11,7 +11,7 @@ GameRenderer::GameRenderer(HWND hWnd)
 }
 
 
-GameRenderer::~GameRenderer()
+GdiRenderer::~GdiRenderer()
 {
 	if (m_hBitmapOld)
 	{
@@ -36,23 +36,14 @@ GameRenderer::~GameRenderer()
 }
 
 
-void GameRenderer::Clear(DWORD dwClearColor)
+void GdiRenderer::Clear(DWORD dwClearColor)
 {
-	HDC hDC = LockRenderTarget();
-
-	if (!hDC)
-	{
-		return;
-	}
-
 	HBRUSH hBrush = ::CreateSolidBrush(dwClearColor);
-	::FillRect(hDC, &m_rtWnd, hBrush);
+	::FillRect(m_hMemoryDC, &m_rtWnd, hBrush);
 	::DeleteObject(hBrush);
-
-	UnlockRenderTarget(hDC);
 }
 
-bool GameRenderer::Initialize()
+bool GdiRenderer::Initialize()
 {
 	if (!m_hWnd)
 	{
@@ -77,19 +68,8 @@ bool GameRenderer::Initialize()
 	return true;
 }
 
-HDC GameRenderer::LockRenderTarget()
+void GdiRenderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, tstring const &strFont, int nFontSize)
 {
-	return m_hMemoryDC;
-}
-
-void GameRenderer::UnlockRenderTarget(HDC hDC)
-{
-}
-
-void GameRenderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, tstring const &strFont, int nFontSize)
-{
-	HDC hDC = LockRenderTarget();
-
 	HFONT hFont = ::CreateFont(
 		nFontSize,					// nHeight
 		0,                         // nWidth
@@ -106,100 +86,85 @@ void GameRenderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, t
 		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
 		strFont.c_str()
 		);
-	HGDIOBJ hOldFont = ::SelectObject(hDC, hFont);
+	HGDIOBJ hOldFont = ::SelectObject(m_hMemoryDC, hFont);
 
-	::SetTextColor(hDC, color);
-	::SetBkMode(hDC, TRANSPARENT);
+	::SetTextColor(m_hMemoryDC, color);
+	::SetBkMode(m_hMemoryDC, TRANSPARENT);
 	
-	::DrawText(hDC, str.c_str(), -1, lpRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	::DrawText(m_hMemoryDC, str.c_str(), -1, lpRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-	::SelectObject(hDC, hOldFont);
+	::SelectObject(m_hMemoryDC, hOldFont);
 	::DeleteObject(hFont);
-
-	UnlockRenderTarget(hDC);
 }
 
-void GameRenderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF color, int nWidth/* = 1*/)
+void GdiRenderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF color, int nWidth/* = 1*/)
 {
-	HDC hDC = LockRenderTarget();
-
 	HPEN hPen = ::CreatePen(PS_SOLID, nWidth, color);
-	HGDIOBJ hOldPen = ::SelectObject(hDC, hPen);
-	::MoveToEx(hDC, x1, y1, nullptr);
-	::LineTo(hDC, x2, y2);
+	HGDIOBJ hOldPen = ::SelectObject(m_hMemoryDC, hPen);
+	::MoveToEx(m_hMemoryDC, x1, y1, nullptr);
+	::LineTo(m_hMemoryDC, x2, y2);
 
-	::SelectObject(hDC, hOldPen);
+	::SelectObject(m_hMemoryDC, hOldPen);
 	::DeleteObject(hPen);
-	UnlockRenderTarget(hDC);
 }
 
-void GameRenderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill)
+void GdiRenderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill)
 {
-	HDC hDC = LockRenderTarget();
-
 	HBRUSH hBrush = nullptr;
 	HGDIOBJ hOldBrush = nullptr;
 
 	if (bFill)
 	{
 		hBrush = ::CreateSolidBrush(dwColorFill);
-		hOldBrush = ::SelectObject(hDC, hBrush);
+		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 	else
 	{
 		hBrush = (HBRUSH)::GetStockObject(NULL_BRUSH);
-		hOldBrush = ::SelectObject(hDC, hBrush);
+		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 
 	HPEN hPen = ::CreatePen(PS_SOLID, nWidth, dwColorStroke);
-	HGDIOBJ hOldPen = ::SelectObject(hDC, hPen);
-	Rectangle(hDC, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	HGDIOBJ hOldPen = ::SelectObject(m_hMemoryDC, hPen);
+	Rectangle(m_hMemoryDC, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
 	
-	::SelectObject(hDC, hOldPen);
+	::SelectObject(m_hMemoryDC, hOldPen);
 	::DeleteObject(hPen);
 
-	::SelectObject(hDC, hOldBrush);
+	::SelectObject(m_hMemoryDC, hOldBrush);
 	::DeleteObject(hBrush);
-
-	UnlockRenderTarget(hDC);
 }
 
-void GameRenderer::DrawRoundRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill, int nRW, int nRH)
+void GdiRenderer::DrawRoundRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill, int nRW, int nRH)
 {
-	HDC hDC = LockRenderTarget();
-
 	HBRUSH hBrush = nullptr;
 	HGDIOBJ hOldBrush = nullptr;
 
 	if (bFill)
 	{
 		hBrush = ::CreateSolidBrush(dwColorFill);
-		hOldBrush = ::SelectObject(hDC, hBrush);
+		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 	else
 	{
 		hBrush = (HBRUSH)::GetStockObject(NULL_BRUSH);
-		hOldBrush = ::SelectObject(hDC, hBrush);
+		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 
 	HPEN hPen = ::CreatePen(PS_SOLID, nWidth, dwColorStroke);
-	HGDIOBJ hOldPen = ::SelectObject(hDC, hPen);
-	RoundRect(hDC, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, nRW, nRH);
+	HGDIOBJ hOldPen = ::SelectObject(m_hMemoryDC, hPen);
+	RoundRect(m_hMemoryDC, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, nRW, nRH);
 
-	::SelectObject(hDC, hOldPen);
+	::SelectObject(m_hMemoryDC, hOldPen);
 	::DeleteObject(hPen);
 
-	::SelectObject(hDC, hOldBrush);
+	::SelectObject(m_hMemoryDC, hOldBrush);
 	::DeleteObject(hBrush);
-
-	UnlockRenderTarget(hDC);
 }
 
 
-void GameRenderer::Present(HWND hWnd)
+void GdiRenderer::Present(HWND hWnd)
 {
-	HDC hMemoryDC = LockRenderTarget();
-	
 	if (hWnd == nullptr)
 	{
 		hWnd = m_hWnd;
@@ -216,6 +181,4 @@ void GameRenderer::Present(HWND hWnd)
 	{
 		DWORD err = ::GetLastError();
 	}
-
-	UnlockRenderTarget(hMemoryDC);
 }

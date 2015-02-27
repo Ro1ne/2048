@@ -2,7 +2,12 @@
 #include "GameController.h"
 #include "GameLooper.h"
 #include "GameBoard.h"
-#include "GameRenderer.h"
+
+#ifndef USE_D2D_RENDERER
+#include "GdiRenderer.h"
+#else
+#include "D2DRenderer.h"
+#endif
 #include <deque>
 #include <algorithm>
 
@@ -59,8 +64,12 @@ bool GameController::Initialize()
 	}
 
 	// Initialize Game Renderer
-	m_pGameRenderer = new GameRenderer(hWnd);
-	if (!m_pGameRenderer || !m_pGameRenderer->Initialize())
+#ifndef USE_D2D_RENDERER
+	m_pRenderer = new GdiRenderer(hWnd);
+#else
+	m_pRenderer = new D2DRenderer(hWnd);
+#endif
+	if (!m_pRenderer || !m_pRenderer->Initialize())
 	{
 		return false;
 	}
@@ -308,15 +317,22 @@ void GameController::ProcessKey(KPAD_DIR kDir)
 
 void GameController::GameMain()
 {
-	if (!m_pGameBoard || !m_pGameRenderer)
+	if (!m_pGameBoard || !m_pRenderer)
 	{
 		return;
 	}
 
-	m_pGameRenderer->Clear(RGB(173, 160, 147));
 
-	DrawTitle();
-	DrawBoard();
+	if (m_pRenderer->BeginPaint())
+	{
+		m_pRenderer->Clear(RGB(173, 160, 147));
+		DrawTitle();
+		DrawBoard();
+		m_pRenderer->EndPaint();
+
+		m_pRenderer->Present(nullptr);
+	}
+
 }
 
 void GameController::DrawTitle()
@@ -325,11 +341,11 @@ void GameController::DrawTitle()
 	GetClientRect(m_pLooper->GetHWND(), &rt);
 	rt.bottom = GAMETITLE_HEIGHT / 2;
 
-	m_pGameRenderer->DrawText(_T("2048 Game"), &rt, RGB(119, 110, 101), _T("Arial"), 60);
+	m_pRenderer->DrawText(_T("2048 Game"), &rt, RGB(119, 110, 101), _T("Arial"), 60);
 
 	rt.top = GAMETITLE_HEIGHT / 2;
 	rt.bottom = rt.top + GAMETITLE_HEIGHT / 2;
-	m_pGameRenderer->DrawText(_T("Score :") + std::to_string(m_nTotalScore), &rt,  RGB(255, 255, 255), _T("Arial"), 40);
+	m_pRenderer->DrawText(_T("Score :") + to_string(m_nTotalScore), &rt, RGB(255, 255, 255), _T("Arial"), 40);
 }
 
 void GameController::DrawBoard()
@@ -338,7 +354,7 @@ void GameController::DrawBoard()
 	GetClientRect(m_pLooper->GetHWND(), &rt);
 
 	rt.top += GAMETITLE_HEIGHT;
-	m_pGameRenderer->DrawRect(&rt, RGB(173, 160, 147), 1, TRUE, RGB(173, 160, 147));
+	m_pRenderer->DrawRect(&rt, RGB(173, 160, 147), 1, TRUE, RGB(173, 160, 147));
 
 	int nWidth = rt.right - rt.left;
 	int nHeight = rt.bottom - rt.top;
@@ -357,7 +373,7 @@ void GameController::DrawBoard()
 
 			COLORREF colorFrame = RGB(173, 160, 147);
 			int nFrameWidth = 10;
-			m_pGameRenderer->DrawRoundRect(&rtBox, colorFrame, 1, TRUE, colorFrame, 10, 10);
+			m_pRenderer->DrawRoundRect(&rtBox, colorFrame, 1, TRUE, colorFrame, 10, 10);
 
 			InflateRect(&rtBox, -nFrameWidth / 2, -nFrameWidth / 2);
 			int nValue = m_pGameBoard->GetBlock(x, y).m_nValue;
@@ -376,14 +392,11 @@ void GameController::DrawBoard()
 				colorBox = g_aPalette[nIdx];
 			}
 
-			m_pGameRenderer->DrawRoundRect(&rtBox, colorBox, 1, TRUE, colorBox, 10, 10);
+			m_pRenderer->DrawRoundRect(&rtBox, colorBox, 1, TRUE, colorBox, 10, 10);
 			if (nValue > 0)
 			{
-				m_pGameRenderer->DrawText(std::to_string(nValue), &rtBox, nValue > 4 ? RGB(255, 255, 255) : RGB(119, 110, 101), _T("Arial"), 60);
+				m_pRenderer->DrawText(to_string(nValue), &rtBox, nValue > 4 ? RGB(255, 255, 255) : RGB(119, 110, 101), _T("Arial"), 60);
 			}
 		}
 	}
-
-
-	m_pGameRenderer->Present(nullptr);
 }
