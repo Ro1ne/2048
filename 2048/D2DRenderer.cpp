@@ -131,7 +131,7 @@ void D2DRenderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF dwColor, int
 
 bool D2DRenderer::BeginPaint()
 {
-	if (CreateDeviceResource())
+	if (SUCCEEDED(CreateDeviceResource()))
 	{
 		m_pRenderTarget->BeginDraw();
 	}
@@ -183,7 +183,7 @@ HRESULT D2DRenderer::CreateDeviceResource()
 	}
 
 exit:
-	return hr == S_OK;
+	return hr;
 }
 HRESULT D2DRenderer::CreateDeviceDependentResource()
 {
@@ -211,7 +211,7 @@ HRESULT D2DRenderer::CreateDeviceDependentResource()
 		);
 
 exit:
-	return hr == S_OK;
+	return hr;
 }
 
 void D2DRenderer::DiscardDeviceResource()

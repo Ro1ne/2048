@@ -35,7 +35,12 @@ static const COLORREF g_aPalette[] =
 	RGB(217, 181, 32) // 2048
 };
 
-static const UINT g_nPaletteSize = ARRAYSIZE(g_aPalette);
+
+template <typename T, size_t N>
+char(*ArraySizeHelper(T(&)[N]))[N];
+
+#define ArraySize(A) (sizeof(*ArraySizeHelper(A)))
+static const UINT g_nPaletteSize = ArraySize(g_aPalette);
 
 #ifndef _UNICODE
 #define tstring std::string 
