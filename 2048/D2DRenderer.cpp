@@ -4,16 +4,6 @@
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dwrite.lib")
 
-template<class T>
-static inline void SafeRelease(T **pUnk)
-{
-	if (*pUnk)
-	{
-		(*pUnk)->Release();
-		(*pUnk) = nullptr;
-	}
-}
-
 static inline D2D1_COLOR_F COLORREF_TO_D2DCOLOR(COLORREF color, int nAlpha = 255)
 {
 	return D2D1::ColorF(GetRValue(color) / 255.0f, GetGValue(color) / 255.0f, GetBValue(color) / 255.0f, nAlpha / 255.0f);

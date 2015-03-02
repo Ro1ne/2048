@@ -20,4 +20,6 @@ protected:
 	HWND m_hWnd;
 };
 
+BaseRenderer *CreateRenderer(HWND hWnd, RendererType type);
+
 #endif //_BASE_RENDERER_H_

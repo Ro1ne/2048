@@ -70,11 +70,7 @@ bool GameController::Initialize()
 	}
 
 	// Initialize Game Renderer
-#ifndef USE_D2D_RENDERER
-	m_pRenderer = new GdiRenderer(hWnd);
-#else
-	m_pRenderer = new D2DRenderer(hWnd);
-#endif
+	m_pRenderer = CreateRenderer(hWnd, kDefaultRendererType);
 	if (!m_pRenderer || !m_pRenderer->Initialize())
 	{
 		return false;

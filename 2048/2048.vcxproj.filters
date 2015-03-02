@@ -22,6 +22,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="D3D9Renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseRenderer.h">
@@ -43,6 +46,9 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="GdiRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D9Renderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>

@@ -44,9 +44,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\Microsoft DirectX SDK (June 2010)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -66,6 +68,7 @@
   <ItemGroup>
     <ClCompile Include="BaseRenderer.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
+    <ClCompile Include="D3D9Renderer.cpp" />
     <ClCompile Include="GameBoard.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameLooper.cpp" />
@@ -76,6 +79,7 @@
     <ClInclude Include="BaseRenderer.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="D2DRenderer.h" />
+    <ClInclude Include="D3D9Renderer.h" />
     <ClInclude Include="GameBoard.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameLooper.h" />

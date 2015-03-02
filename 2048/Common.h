@@ -50,7 +50,25 @@ static const UINT g_nPaletteSize = ArraySize(g_aPalette);
 #define to_string std::to_wstring 
 #endif
 
-#define USE_D2D_RENDERER
+enum RendererType
+{
+	kRendererGdi,
+	kRendererDirect2D,
+	kRendererDirect3D9,
+};
+
+static const RendererType kDefaultRendererType = kRendererDirect3D9;
+
+template<class T>
+static inline void SafeRelease(T **pUnk)
+{
+	if (*pUnk)
+	{
+		(*pUnk)->Release();
+		(*pUnk) = nullptr;
+	}
+}
+
 
 extern HINSTANCE g_hInstance;
 
