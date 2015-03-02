@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <string>
+#include <map>
 
 #define GAMETITLE_HEIGHT 200
 #define GAMEWINDOW_WIDTH 600
@@ -57,7 +58,7 @@ enum RendererType
 	kRendererDirect3D9,
 };
 
-static const RendererType kDefaultRendererType = kRendererDirect3D9;
+static const RendererType kDefaultRendererType = kRendererGdi;
 
 template<class T>
 static inline void SafeRelease(T **pUnk)
@@ -71,5 +72,7 @@ static inline void SafeRelease(T **pUnk)
 
 
 extern HINSTANCE g_hInstance;
+
+#pragma warning(disable:4005)
 
 #endif//_COMMON_H_

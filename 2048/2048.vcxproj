@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseRenderer.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="D3D9Renderer.cpp" />
     <ClCompile Include="GameBoard.cpp" />
@@ -77,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseRenderer.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="D2DRenderer.h" />
     <ClInclude Include="D3D9Renderer.h" />

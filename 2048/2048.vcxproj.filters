@@ -25,6 +25,9 @@
     <ClCompile Include="D3D9Renderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectPool.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseRenderer.h">
@@ -51,6 +54,9 @@
     <ClInclude Include="D3D9Renderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectPool.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -58,6 +64,9 @@
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{c6c92f3b-4f60-454b-aa0e-a87065732e7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{2f1050a1-ca21-4dc0-963b-747ffcabd254}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

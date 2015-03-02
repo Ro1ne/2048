@@ -35,6 +35,8 @@ D3D9Renderer::D3D9Renderer(HWND hWnd)
 
 D3D9Renderer::~D3D9Renderer()
 {
+	m_fontPool.Clear();
+
 	SafeRelease(&m_pD3D9);
 	SafeRelease(&m_pD3DDevice9);
 }
@@ -64,6 +66,8 @@ bool D3D9Renderer::Initialize()
 		return false;
 	}
 
+	m_fontPool.Initialize(m_pD3DDevice9);
+
 	return true;
 }
 
@@ -74,10 +78,8 @@ void D3D9Renderer::Clear(COLORREF dwClearColor)
 
 void D3D9Renderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, tstring const &strFont, int nFontSize)
 {
-	// FIXEDME : i know it's not an efficient way to create LPD3DXFONT pointer every frame, it's slow and waste much cpu time, but i will implement an object pool later.
 	LPD3DXFONT pFont = nullptr;
-	D3DXCreateFont(m_pD3DDevice9, nFontSize, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, \
-		CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, strFont.c_str(), &pFont);
+	pFont = m_fontPool.GetObject(std::make_pair(nFontSize, strFont));
 
 	if (pFont == nullptr)
 	{
@@ -85,8 +87,6 @@ void D3D9Renderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, t
 	}
 
 	pFont->DrawText(nullptr, str.c_str(), str.length(), lpRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE, COLORREF_TO_D3DCOLOR(color));
-
-	SafeRelease(&pFont);
 }
 
 void D3D9Renderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF dwColor, int nWidth/* = 1*/)

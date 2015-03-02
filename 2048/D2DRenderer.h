@@ -3,6 +3,33 @@
 #include <d2d1.h>
 #include <dwrite.h>
 #include "BaseRenderer.h"
+#include "ObjectPool.h"
+
+class TextFormatPool : public ObjectPool<std::pair<int, tstring>, IDWriteTextFormat *>
+{
+protected:
+	virtual  IDWriteTextFormat * CreateNewObj(std::pair<int, tstring> key)
+	{
+		IDWriteTextFormat *pFormat = nullptr;
+		IDWriteFactory *pFactory = (IDWriteFactory *)m_pContext;
+		pFactory->CreateTextFormat(
+			key.second.c_str(),
+			nullptr,
+			DWRITE_FONT_WEIGHT_NORMAL,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			key.first,
+			_T(""),
+			&pFormat
+			);
+
+		return pFormat;
+	}
+	virtual void DestroyObj(IDWriteTextFormat *pTextformat)
+	{
+		SafeRelease(&pTextformat);
+	}
+};
 
 class D2DRenderer : public BaseRenderer
 {
@@ -29,5 +56,6 @@ protected:
 	ID2D1SolidColorBrush *m_pColorBrush;
 	IDWriteTextFormat *m_pTextFormat;
 	IDWriteFactory *m_pDWriteFactory;
+	TextFormatPool m_textformatPool;
 };
 

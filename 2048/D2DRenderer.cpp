@@ -26,6 +26,8 @@ D2DRenderer::D2DRenderer(HWND hWnd)
 
 D2DRenderer::~D2DRenderer()
 {
+	m_textformatPool.Clear();
+
 	SafeRelease(&m_pRenderTarget);
 	SafeRelease(&m_pD2DFactory);
 	SafeRelease(&m_pColorBrush);
@@ -59,22 +61,12 @@ void D2DRenderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, ts
 	m_pColorBrush->SetColor(COLORREF_TO_D2DCOLOR(color));
 
 	IDWriteTextFormat *pTextFormat = nullptr;
-	m_pDWriteFactory->CreateTextFormat(
-		strFont.c_str(),
-		nullptr,
-		DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		nFontSize,
-		_T(""),
-		&pTextFormat
-		);
 
+	pTextFormat = m_textformatPool.GetObject(std::make_pair(nFontSize, strFont));
 	pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
 	m_pRenderTarget->DrawText(str.c_str(), str.length(), pTextFormat, RECT_TO_D2DRECT(*lpRect), m_pColorBrush);
-	SafeRelease(&pTextFormat);
 }
 
 void D2DRenderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill)
@@ -188,6 +180,8 @@ HRESULT D2DRenderer::CreateDeviceDependentResource()
 	{
 		goto exit;
 	}
+
+	m_textformatPool.Initialize(m_pDWriteFactory);
 
 	hr = m_pDWriteFactory->CreateTextFormat(
 		_T("SimHei"),

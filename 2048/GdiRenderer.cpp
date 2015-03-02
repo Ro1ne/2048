@@ -13,6 +13,10 @@ GdiRenderer::GdiRenderer(HWND hWnd)
 
 GdiRenderer::~GdiRenderer()
 {
+	m_brushPool.Clear();
+	m_fontPool.Clear();
+	m_penPool.Clear();
+
 	if (m_hBitmapOld)
 	{
 		if (m_hMemoryDC)
@@ -38,9 +42,8 @@ GdiRenderer::~GdiRenderer()
 
 void GdiRenderer::Clear(DWORD dwClearColor)
 {
-	HBRUSH hBrush = ::CreateSolidBrush(dwClearColor);
+	HBRUSH hBrush = m_brushPool.GetObject(dwClearColor);
 	::FillRect(m_hMemoryDC, &m_rtWnd, hBrush);
-	::DeleteObject(hBrush);
 }
 
 bool GdiRenderer::Initialize()
@@ -70,22 +73,8 @@ bool GdiRenderer::Initialize()
 
 void GdiRenderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, tstring const &strFont, int nFontSize)
 {
-	HFONT hFont = ::CreateFont(
-		nFontSize,					// nHeight
-		0,                         // nWidth
-		0,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		DEFAULT_CHARSET,           // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		CLEARTYPE_QUALITY,         // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		strFont.c_str()
-		);
+	HFONT hFont = nullptr;
+	hFont = m_fontPool.GetObject(std::make_pair(nFontSize, strFont));
 	HGDIOBJ hOldFont = ::SelectObject(m_hMemoryDC, hFont);
 
 	::SetTextColor(m_hMemoryDC, color);
@@ -94,18 +83,16 @@ void GdiRenderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, ts
 	::DrawText(m_hMemoryDC, str.c_str(), -1, lpRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	::SelectObject(m_hMemoryDC, hOldFont);
-	::DeleteObject(hFont);
 }
 
 void GdiRenderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF color, int nWidth/* = 1*/)
 {
-	HPEN hPen = ::CreatePen(PS_SOLID, nWidth, color);
+	HPEN hPen = m_penPool.GetObject(std::make_pair(nWidth, color));
 	HGDIOBJ hOldPen = ::SelectObject(m_hMemoryDC, hPen);
 	::MoveToEx(m_hMemoryDC, x1, y1, nullptr);
 	::LineTo(m_hMemoryDC, x2, y2);
 
 	::SelectObject(m_hMemoryDC, hOldPen);
-	::DeleteObject(hPen);
 }
 
 void GdiRenderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill)
@@ -115,7 +102,7 @@ void GdiRenderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BO
 
 	if (bFill)
 	{
-		hBrush = ::CreateSolidBrush(dwColorFill);
+		hBrush = m_brushPool.GetObject(dwColorFill);
 		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 	else
@@ -124,15 +111,17 @@ void GdiRenderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BO
 		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 
-	HPEN hPen = ::CreatePen(PS_SOLID, nWidth, dwColorStroke);
+	HPEN hPen = m_penPool.GetObject( std::make_pair(nWidth, dwColorStroke));
 	HGDIOBJ hOldPen = ::SelectObject(m_hMemoryDC, hPen);
 	Rectangle(m_hMemoryDC, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+
+	if (!bFill)
+	{
+		::DeleteObject(hBrush);
+	}
 	
 	::SelectObject(m_hMemoryDC, hOldPen);
-	::DeleteObject(hPen);
-
 	::SelectObject(m_hMemoryDC, hOldBrush);
-	::DeleteObject(hBrush);
 }
 
 void GdiRenderer::DrawRoundRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill, int nRW, int nRH)
@@ -142,7 +131,7 @@ void GdiRenderer::DrawRoundRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidt
 
 	if (bFill)
 	{
-		hBrush = ::CreateSolidBrush(dwColorFill);
+		hBrush = m_brushPool.GetObject(dwColorFill);
 		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 	else
@@ -151,15 +140,17 @@ void GdiRenderer::DrawRoundRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidt
 		hOldBrush = ::SelectObject(m_hMemoryDC, hBrush);
 	}
 
-	HPEN hPen = ::CreatePen(PS_SOLID, nWidth, dwColorStroke);
+	HPEN hPen = m_penPool.GetObject(std::make_pair(nWidth, dwColorStroke));
 	HGDIOBJ hOldPen = ::SelectObject(m_hMemoryDC, hPen);
 	RoundRect(m_hMemoryDC, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, nRW, nRH);
 
-	::SelectObject(m_hMemoryDC, hOldPen);
-	::DeleteObject(hPen);
+	if (!bFill)
+	{
+		::DeleteObject(hBrush);
+	}
 
+	::SelectObject(m_hMemoryDC, hOldPen);
 	::SelectObject(m_hMemoryDC, hOldBrush);
-	::DeleteObject(hBrush);
 }
 
 
