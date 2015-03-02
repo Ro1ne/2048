@@ -26,6 +26,12 @@ GameController::~GameController()
 		delete m_pGameBoard;
 		m_pGameBoard = nullptr;
 	}
+
+	if (m_pRenderer)
+	{
+		delete m_pRenderer;
+		m_pRenderer = nullptr;
+	}
 }
 
 bool GameController::Initialize()
