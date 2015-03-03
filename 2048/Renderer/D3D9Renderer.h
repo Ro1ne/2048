@@ -1,9 +1,15 @@
-#pragma once
+#ifndef _D3D9_RENDERER_H_
+#define _D3D9_RENDERER_H_
+
+
+#ifdef BUILD_WITH_D3D9
+
 #include "BaseRenderer.h"
 #include "ObjectPool.h"
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <map>
+
 
 class D3DXFontPool : public ObjectPool<std::pair<int, tstring>, LPD3DXFONT>
 {
@@ -45,3 +51,6 @@ private:
 	D3DXFontPool m_fontPool;
 };
 
+#endif
+
+#endif //_D3D9_RENDERER_H_

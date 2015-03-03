@@ -1,4 +1,6 @@
 #include "Common.h"
+
+#ifdef BUILD_WITH_D3D9
 #include "D3D9Renderer.h"
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -174,3 +176,5 @@ void D3D9Renderer::Present(HWND hWnd)
 {
 	m_pD3DDevice9->Present(nullptr, nullptr, nullptr, nullptr);
 }
+
+#endif

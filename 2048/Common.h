@@ -51,15 +51,20 @@ static const UINT g_nPaletteSize = ArraySize(g_aPalette);
 #define to_string std::to_wstring 
 #endif
 
+//#define BUILD_WITH_D3D9
+
 enum RendererType
 {
 	kRendererGdi,
 	kRendererDirect2D,
+
+#ifdef BUILD_WITH_D3D9
 	kRendererDirect3D9,
+#endif
 	kRendererOpenGL11
 };
 
-static const RendererType kDefaultRendererType = kRendererOpenGL11;
+static const RendererType kDefaultRendererType = kRendererDirect2D;
 
 template<class T>
 static inline void SafeRelease(T **pUnk)
