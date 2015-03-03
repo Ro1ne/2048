@@ -1,71 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="BaseRenderer.cpp">
+    <ClCompile Include="Renderer\BaseRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="D2DRenderer.cpp">
+    <ClCompile Include="Renderer\D2DRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="GameLooper.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="GameController.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="GameBoard.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="GdiRenderer.cpp">
+    <ClCompile Include="Renderer\D3D9Renderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D9Renderer.cpp">
+    <ClCompile Include="Renderer\GdiRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectPool.cpp">
+    <ClCompile Include="Renderer\OpenGL11Renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameBoard.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameController.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameLooper.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\ObjectPool.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL11Renderer.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseRenderer.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D2DRenderer.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="GameLooper.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GameController.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GameBoard.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GdiRenderer.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D9Renderer.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectPool.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL11Renderer.h">
+    <ClInclude Include="Renderer\BaseRenderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\D2DRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D9Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\GdiRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGL11Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameBoard.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameController.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameLooper.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ObjectPool.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">

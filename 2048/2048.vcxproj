@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Microsoft DirectX SDK (June 2010)\Include;.\;.\Renderer;.\Game;.\Utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,29 +66,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BaseRenderer.cpp" />
-    <ClCompile Include="ObjectPool.cpp" />
-    <ClCompile Include="D2DRenderer.cpp" />
-    <ClCompile Include="D3D9Renderer.cpp" />
-    <ClCompile Include="GameBoard.cpp" />
-    <ClCompile Include="GameController.cpp" />
-    <ClCompile Include="GameLooper.cpp" />
-    <ClCompile Include="GdiRenderer.cpp" />
+    <ClCompile Include="Game\GameBoard.cpp" />
+    <ClCompile Include="Game\GameController.cpp" />
+    <ClCompile Include="Game\GameLooper.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="OpenGL11Renderer.cpp" />
+    <ClCompile Include="Renderer\BaseRenderer.cpp" />
+    <ClCompile Include="Renderer\D2DRenderer.cpp" />
+    <ClCompile Include="Renderer\D3D9Renderer.cpp" />
+    <ClCompile Include="Renderer\GdiRenderer.cpp" />
+    <ClCompile Include="Renderer\OpenGL11Renderer.cpp" />
+    <ClCompile Include="Utils\ObjectPool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseRenderer.h" />
-    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="D2DRenderer.h" />
-    <ClInclude Include="D3D9Renderer.h" />
-    <ClInclude Include="GameBoard.h" />
-    <ClInclude Include="GameController.h" />
-    <ClInclude Include="GameLooper.h" />
-    <ClInclude Include="GdiRenderer.h" />
-    <ClInclude Include="OpenGL11Renderer.h" />
+    <ClInclude Include="Game\GameBoard.h" />
+    <ClInclude Include="Game\GameController.h" />
+    <ClInclude Include="Game\GameLooper.h" />
+    <ClInclude Include="Renderer\BaseRenderer.h" />
+    <ClInclude Include="Renderer\D2DRenderer.h" />
+    <ClInclude Include="Renderer\D3D9Renderer.h" />
+    <ClInclude Include="Renderer\GdiRenderer.h" />
+    <ClInclude Include="Renderer\OpenGL11Renderer.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Utils\ObjectPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2048.rc" />
