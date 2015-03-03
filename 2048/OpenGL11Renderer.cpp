@@ -89,11 +89,18 @@ bool OpenGL11Renderer::Initialize()
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(m_rtWnd.left, m_rtWnd.right, m_rtWnd.bottom, m_rtWnd.top, -1.0f, 1.0f);
+
+	float fWidth = m_rtWnd.right;
+	float fHeight = m_rtWnd.bottom;
+	glFrustum(-fWidth / 2, fWidth / 2, -fHeight / 2, fHeight / 2, 1.0f, 10.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+	glScalef(1.0f, -1.0f, 1.0f); // Revert Y axis
+	glTranslatef(-(m_rtWnd.right - m_rtWnd.left) / 2.0, -(m_rtWnd.bottom - m_rtWnd.top) / 2.0, 0.0f);
+	
+	gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	
 	return true;
 }
 
@@ -112,8 +119,9 @@ void OpenGL11Renderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF colo
 	SIZE szText = {};
 	GetTextExtentPoint32(m_hDC, str.c_str(), str.length(), &szText);
 
+	static const float fzValue = -0.01f;
 	glColor3ub(GetRValue(color), GetGValue(color), GetBValue(color));
-	glRasterPos2f(lpRect->left + ((lpRect->right - lpRect->left) - szText.cx) / 2, lpRect->bottom - ((lpRect->bottom - lpRect->top) - szText.cy) / 2);
+	glRasterPos3f(lpRect->left + ((lpRect->right - lpRect->left) - szText.cx) / 2, lpRect->bottom - ((lpRect->bottom - lpRect->top) - szText.cy) / 2, fzValue);
 	glListBase(dwLists);
 	glCallLists(str.length(), GL_UNSIGNED_SHORT, str.c_str());
 
@@ -122,7 +130,7 @@ void OpenGL11Renderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF colo
 
 void OpenGL11Renderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF dwColor, int nWidth/* = 1*/)
 {
-	static const float fzValue = 0.01f;
+	static const float fzValue = -0.01f;
 	glBegin(GL_LINES);
 	glColor3ub(GetRValue(dwColor), GetGValue(dwColor), GetBValue(dwColor));
 	glVertex3f(x1, y1, fzValue);
@@ -133,7 +141,7 @@ void OpenGL11Renderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF dwColor
 
 void OpenGL11Renderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill)
 {
-	static const float fzValue = 0.01f;
+	static const float fzValue = -0.01f;
 	glBegin(GL_TRIANGLE_STRIP);
 	glColor3ub(GetRValue(dwColorFill), GetGValue(dwColorFill), GetBValue(dwColorFill));
 	glVertex3f(lpRect->left, lpRect->bottom, fzValue);

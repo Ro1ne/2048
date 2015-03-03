@@ -28,7 +28,9 @@
     <ClCompile Include="ObjectPool.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL11Renderer.cpp" />
+    <ClCompile Include="OpenGL11Renderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseRenderer.h">
@@ -61,7 +63,9 @@
     <ClInclude Include="resource.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL11Renderer.h" />
+    <ClInclude Include="OpenGL11Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
