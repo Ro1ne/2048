@@ -28,6 +28,7 @@
     <ClCompile Include="ObjectPool.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL11Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseRenderer.h">
@@ -57,6 +58,10 @@
     <ClInclude Include="ObjectPool.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL11Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -68,5 +73,13 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{2f1050a1-ca21-4dc0-963b-747ffcabd254}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{f3b7a0df-07a4-4a43-b41c-95a471362494}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="2048.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -340,7 +340,7 @@ typedef enum _D3DRENDERSTATETYPE {
     D3DRS_SRCBLEND                  = 19,   /* D3DBLEND */
     D3DRS_DESTBLEND                 = 20,   /* D3DBLEND */
     D3DRS_CULLMODE                  = 22,   /* D3DCULL */
-    D3DRS_ZFUNC                     = 23,   /* D3DCMPFUNC */
+	D3DRS_ZFUNC = 23,   /* D3DCMPFUNC */
     D3DRS_ALPHAREF                  = 24,   /* D3DFIXED */
     D3DRS_ALPHAFUNC                 = 25,   /* D3DCMPFUNC */
     D3DRS_DITHERENABLE              = 26,   /* TRUE to enable dithering */

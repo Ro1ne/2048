@@ -62,7 +62,7 @@ bool GameLooper::Initialize()
 	wndCls.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wndCls.hInstance = g_hInstance;
 	wndCls.lpszClassName = GAME_WND_CLASS;
-	wndCls.style = CS_HREDRAW | CS_VREDRAW;
+	wndCls.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wndCls.lpfnWndProc = WindowProc;
 
 	if (!::RegisterClass(&wndCls))
@@ -70,7 +70,7 @@ bool GameLooper::Initialize()
 		return false;
 	}
 
-	HWND hWnd = ::CreateWindow(GAME_WND_CLASS, GAME_WND_TITLE, WS_POPUPWINDOW,\
+	HWND hWnd = ::CreateWindow(GAME_WND_CLASS, GAME_WND_TITLE, WS_POPUPWINDOW  | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,\
 								(GetSystemMetrics(SM_CXSCREEN) - GAMEWINDOW_WIDTH) / 2, (GetSystemMetrics(SM_CYSCREEN) - GAMEWINDOW_HEIGHT) / 2,\
 								GAMEWINDOW_WIDTH, GAMEWINDOW_HEIGHT, nullptr, nullptr, g_hInstance, this);
 	if (!hWnd)

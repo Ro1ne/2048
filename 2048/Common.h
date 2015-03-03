@@ -56,9 +56,10 @@ enum RendererType
 	kRendererGdi,
 	kRendererDirect2D,
 	kRendererDirect3D9,
+	kRendererOpenGL11
 };
 
-static const RendererType kDefaultRendererType = kRendererGdi;
+static const RendererType kDefaultRendererType = kRendererOpenGL11;
 
 template<class T>
 static inline void SafeRelease(T **pUnk)

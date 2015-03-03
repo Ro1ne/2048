@@ -25,7 +25,7 @@ public:
 	Obj GetObject(Key key)
 	{
 		auto itr = m_objPool.find(key);
-		Obj obj = nullptr;
+		Obj obj = 0;
 		if (itr == m_objPool.end())
 		{
 			obj = CreateNewObj(key);

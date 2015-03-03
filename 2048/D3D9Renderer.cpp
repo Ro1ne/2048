@@ -16,11 +16,11 @@ static inline D3DCOLOR COLORREF_TO_D3DCOLOR(COLORREF color, int nAlpha = 255)
 	return D3DCOLOR_ARGB(nAlpha, GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
-#define D3DFVF_CUSTOM D3DFVF_XYZRHW | D3DFVF_DIFFUSE
+#define D3DFVF_CUSTOM D3DFVF_XYZ | D3DFVF_DIFFUSE
 
 struct CustomVertex
 {
-	float x, y, z, w;
+	float x, y, z;
 	D3DCOLOR dwColor;
 };
 
@@ -60,6 +60,8 @@ bool D3D9Renderer::Initialize()
 	param.Windowed = TRUE;
 	param.hDeviceWindow = m_hWnd;
 	param.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	param.EnableAutoDepthStencil = TRUE;
+	param.AutoDepthStencilFormat = D3DFMT_D24S8;
 	HRESULT hr = m_pD3D9->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &param, &m_pD3DDevice9);
 	if (FAILED(hr))
 	{
@@ -68,12 +70,47 @@ bool D3D9Renderer::Initialize()
 
 	m_fontPool.Initialize(m_pD3DDevice9);
 
+	m_pD3DDevice9->SetRenderState(D3DRS_ZENABLE, TRUE);
+	m_pD3DDevice9->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pD3DDevice9->SetRenderState(D3DRS_CLIPPING, FALSE);
+
+	// setup matrix
+	D3DXMATRIX projectionMatrix;
+	D3DXMatrixIdentity(&projectionMatrix);
+	D3DXMatrixPerspectiveLH(&projectionMatrix, m_rtWnd.right - m_rtWnd.left, m_rtWnd.bottom - m_rtWnd.top, 1.0f, 10.0f);
+
+	D3DXMATRIX worldMatrix;
+	D3DXMatrixIdentity(&worldMatrix);
+
+	D3DXMATRIX translationMatrix;
+	D3DXMatrixTranslation(&translationMatrix, -(m_rtWnd.right - m_rtWnd.left) / 2.0f, -(m_rtWnd.bottom - m_rtWnd.top) / 2.0f, 0.0f);
+	D3DXMATRIX scalingMatrix;
+	D3DXMatrixScaling(&scalingMatrix, 1.0f, -1.0f, 1.0f);
+	D3DXMatrixMultiply(&worldMatrix, &translationMatrix, &scalingMatrix);
+
+	D3DXMATRIX viewMatrix;
+	D3DXMatrixIdentity(&viewMatrix);
+
+	D3DXVECTOR3 eye = { 0.0f, 0.0f, -1.0f };
+	D3DXVECTOR3 at = {0.0f, 0.0f, 0.0f};
+	D3DXVECTOR3 up = {0.0f, 1.0f, 0.0f};
+	D3DXMatrixLookAtLH(&viewMatrix, &eye, &at, &up);
+
+	D3DXVECTOR4 vec = { 0.0f, 0.0f, 0.0f, 1.0f };
+	D3DXVec4Transform(&vec, &vec, &worldMatrix);
+	D3DXVec4Transform(&vec, &vec, &viewMatrix);
+	D3DXVec4Transform(&vec, &vec, &projectionMatrix);
+
+	m_pD3DDevice9->SetTransform(D3DTS_VIEW, &viewMatrix);
+	m_pD3DDevice9->SetTransform(D3DTS_WORLD, &worldMatrix);
+	m_pD3DDevice9->SetTransform(D3DTS_PROJECTION, &projectionMatrix);
+
 	return true;
 }
 
 void D3D9Renderer::Clear(COLORREF dwClearColor)
 {
-	m_pD3DDevice9->Clear(0, nullptr, D3DCLEAR_TARGET, COLORREF_TO_D3DCOLOR(dwClearColor), 1.0f, 0);
+	m_pD3DDevice9->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, COLORREF_TO_D3DCOLOR(dwClearColor), 1.0f, 0);
 }
 
 void D3D9Renderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, tstring const &strFont, int nFontSize)
@@ -91,10 +128,11 @@ void D3D9Renderer::DrawText(tstring const &str, LPRECT lpRect, COLORREF color, t
 
 void D3D9Renderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF dwColor, int nWidth/* = 1*/)
 {
+	static const float fzValue = 0.01f;
 	CustomVertex customVertice[] =
 	{
-		x1, y1, 0, 1.0f, COLORREF_TO_D3DCOLOR(dwColor),
-		x2, y2, 0, 1.0f, COLORREF_TO_D3DCOLOR(dwColor)
+		x1, y1, fzValue, COLORREF_TO_D3DCOLOR(dwColor),
+		x2, y2, fzValue, COLORREF_TO_D3DCOLOR(dwColor)
 	};
 
 	m_pD3DDevice9->SetFVF(D3DFVF_CUSTOM);
@@ -103,12 +141,13 @@ void D3D9Renderer::DrawLine(int x1, int y1, int x2, int y2, COLORREF dwColor, in
 
 void D3D9Renderer::DrawRect(LPRECT lpRect, COLORREF dwColorStroke, int nWidth, BOOL bFill, COLORREF dwColorFill)
 {
+	static const float fzValue = 0.01f;
 	CustomVertex customVertice[] =
 	{
-		lpRect->left, lpRect->bottom, 0, 1.0f, COLORREF_TO_D3DCOLOR(dwColorStroke),
-		lpRect->left, lpRect->top, 0, 1.0f, COLORREF_TO_D3DCOLOR(dwColorStroke),
-		lpRect->right, lpRect->bottom, 0, 1.0f, COLORREF_TO_D3DCOLOR(dwColorStroke),
-		lpRect->right, lpRect->top, 0, 1.0f, COLORREF_TO_D3DCOLOR(dwColorStroke),
+		lpRect->left, lpRect->bottom, fzValue, COLORREF_TO_D3DCOLOR(dwColorStroke),
+		lpRect->left, lpRect->top, fzValue, COLORREF_TO_D3DCOLOR(dwColorStroke),
+		lpRect->right, lpRect->bottom, fzValue, COLORREF_TO_D3DCOLOR(dwColorStroke),
+		lpRect->right, lpRect->top, fzValue, COLORREF_TO_D3DCOLOR(dwColorStroke),
 	};
 
 	m_pD3DDevice9->SetFVF(D3DFVF_CUSTOM);

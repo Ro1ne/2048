@@ -75,6 +75,7 @@
     <ClCompile Include="GameLooper.cpp" />
     <ClCompile Include="GdiRenderer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OpenGL11Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseRenderer.h" />
@@ -86,6 +87,11 @@
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameLooper.h" />
     <ClInclude Include="GdiRenderer.h" />
+    <ClInclude Include="OpenGL11Renderer.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="2048.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
